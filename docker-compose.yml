@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+
+  # PostgeSQL server is running on localhost:8200
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: tasks_database
+    ports:
+      - 5432:5432
+    volumes:
+      - .data/postgres:/var/lib/postgresql # maps Dokers's /var/lib/postgresql folder into local .data/postgres folder
+
+  # PgAdmin web panel is running on localhost:8201
+  # Note: localhost:8200 will not work inside the Docker
+  # To connect the PostgeSQL server use host.docker.internal:8200
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@tasks.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 8201:80      
+    volumes:
+      - .data/pgadmin:/var/lib/pgadmin  # maps Dockers's /var/lib/pgadmin folder into local .data/pgadmin folder
+    links:
+      - postgres:pgsql-server
