@@ -7,7 +7,6 @@ import { TaskStatus } from '../task-status.enum';
 //   status: TaskStatus;
 // }
 
-// Create a request schema using `zod` and automatically derive the type from it \o/
 export const UpdateTaskSchema = z.object({
   status: z.nativeEnum(TaskStatus),
 });
