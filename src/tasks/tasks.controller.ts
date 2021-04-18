@@ -18,8 +18,10 @@ import { UpdateTaskSchema } from './dto/update.tasks.dto.';
 import { TasksService } from './tasks.service';
 import * as z from 'zod';
 import { CustomValidationPipe } from '../pipes/validation.pipe';
-import { Task } from './entity';
+import { Task } from './task.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 
 type UpdateTaskDtoType = z.infer<typeof UpdateTaskSchema>;
 
@@ -31,24 +33,31 @@ export class TasksController {
   @Get()
   getTasks(
     @Query(ValidationPipe) filterDto: GetTasksFilterDto,
+    @GetUser() user: User,
   ): Promise<Task[]> {
-    return this.tasksService.getTasks(filterDto);
+    return this.tasksService.getTasks(filterDto, user);
   }
 
   @Get('/:id')
-  getTaskById(@Param('id', ParseIntPipe) id: number): Promise<Task> {
-    return this.tasksService.getTaskById(id);
+  getTaskById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    return this.tasksService.getTaskById(id, user);
   }
 
   @Post()
   @UsePipes(ValidationPipe)
-  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksService.createTask(createTaskDto);
+  createTask(
+    @Body() createTaskDto: CreateTaskDto,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    return this.tasksService.createTask(createTaskDto, user);
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id', ParseIntPipe) id: number) {
-    return this.tasksService.deleteTaskById(id);
+  deleteTask(@Param('id', ParseIntPipe) id: number, @GetUser() user: User,) {
+    return this.tasksService.deleteTaskById(id, user);
   }
 
   @Patch('/:id')
@@ -57,7 +66,8 @@ export class TasksController {
     @Param('id', ParseIntPipe) id: number,
     @Body(new CustomValidationPipe(UpdateTaskSchema))
     updateTaskDto: UpdateTaskDtoType,
+    @GetUser() user: User,
   ): Promise<Task> {
-    return this.tasksService.updateTaskStatus(id, updateTaskDto.status);
+    return this.tasksService.updateTaskStatus(id, updateTaskDto.status, user);
   }
 }
