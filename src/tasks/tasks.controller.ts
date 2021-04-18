@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -18,10 +19,12 @@ import { TasksService } from './tasks.service';
 import * as z from 'zod';
 import { CustomValidationPipe } from '../pipes/validation.pipe';
 import { Task } from './entity';
+import { AuthGuard } from '@nestjs/passport';
 
 type UpdateTaskDtoType = z.infer<typeof UpdateTaskSchema>;
 
 @Controller('tasks')
+@UseGuards(AuthGuard())
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
