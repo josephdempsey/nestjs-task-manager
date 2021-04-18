@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
@@ -28,6 +29,7 @@ type UpdateTaskDtoType = z.infer<typeof UpdateTaskSchema>;
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
+  private logger = new Logger('TaskController');
   constructor(private tasksService: TasksService) {}
 
   @Get()
@@ -35,6 +37,11 @@ export class TasksController {
     @Query(ValidationPipe) filterDto: GetTasksFilterDto,
     @GetUser() user: User,
   ): Promise<Task[]> {
+    this.logger.verbose(
+      `User: ${user.username} retrieve tasks with filter ${JSON.stringify(
+        filterDto,
+      )}`,
+    );
     return this.tasksService.getTasks(filterDto, user);
   }
 
@@ -56,7 +63,7 @@ export class TasksController {
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id', ParseIntPipe) id: number, @GetUser() user: User,) {
+  deleteTask(@Param('id', ParseIntPipe) id: number, @GetUser() user: User) {
     return this.tasksService.deleteTaskById(id, user);
   }
 
