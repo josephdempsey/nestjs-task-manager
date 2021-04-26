@@ -21,8 +21,8 @@ import * as z from 'zod';
 import { CustomValidationPipe } from '../pipes/validation.pipe';
 import { Task } from './task.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { User } from 'src/auth/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../auth/user.entity';
 
 type UpdateTaskDtoType = z.infer<typeof UpdateTaskSchema>;
 
